@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Menu, X, ChevronRight } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -9,71 +8,53 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Services', path: '/services' },
-    { name: 'Projects', path: '/projects' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'About Us', path: '/about' },
+    { name: 'Services', path: '/services', hasDropdown: true },
+    { name: 'Products', path: '/products', hasDropdown: true },
+    { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Contact Us', path: '/contact' }
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-      scrolled 
-        ? 'glass py-4 shadow-xl shadow-pink-500/10 border-b border-pink-500/10' 
-        : 'bg-transparent py-6'
-    }`}>
+    <nav className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled ? 'shadow-lg py-3' : 'py-5'
+    } bg-white`}>
       <div className="container mx-auto px-6 flex items-center justify-between relative">
-        <Link to="/" className="flex items-center gap-2">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent"
-          >
+        <Link to="/" className="flex items-center gap-3">
+          <h1 className="text-xl md:text-2xl font-extrabold text-[#1a1a1a]">
             Fly Digital Technology
-          </motion.div>
+          </h1>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
-          {navItems.map((item) => (
+        <div className="hidden lg:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+          {navItems.map((item, idx) => (
             <Link
-              key={item.name}
+              key={idx}
               to={item.path}
-              className={`relative px-1 py-2 font-medium transition-all duration-300 ${
+              className={`relative px-1 py-2 font-medium text-base transition-all duration-300 flex items-center gap-1 ${
                 location.pathname === item.path 
-                  ? 'text-pink-400' 
-                  : 'text-light-blue/80 hover:text-pink-400'
+                  ? 'text-[#f4a62a]' 
+                  : 'text-[#1a1a1a] hover:text-[#f4a62a]'
               }`}
             >
               {item.name}
-              {location.pathname === item.path && (
-                <motion.div
-                  layoutId="navbar-underline"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400"
-                />
-              )}
+              {item.hasDropdown && <ChevronDown size={16} />}
             </Link>
           ))}
         </div>
 
-        <div className="hidden md:flex items-center">
-          <Link
-            to="/contact"
-            className="glossy-btn bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 text-white px-6 py-2.5 rounded-lg font-bold hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300"
-          >
-            Get Started
-          </Link>
-        </div>
-
         <button
-          className="md:hidden text-pink-400 p-2"
+          className="lg:hidden bg-[#b8a44a] text-white p-2 rounded"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
@@ -82,31 +63,23 @@ const Navbar = () => {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden glass border-t border-pink-500/10"
+          className="lg:hidden bg-white border-t border-gray-200"
         >
           <div className="flex flex-col p-6 gap-4">
-            {navItems.map((item) => (
+            {navItems.map((item, idx) => (
               <Link
-                key={item.name}
+                key={idx}
                 to={item.path}
                 onClick={() => setMobileOpen(false)}
                 className={`text-lg font-medium py-2 ${
                   location.pathname === item.path 
-                    ? 'text-pink-400' 
-                    : 'text-light-blue/80 hover:text-pink-400'
+                    ? 'text-[#f4a62a]' 
+                    : 'text-[#1a1a1a] hover:text-[#f4a62a]'
                 }`}
               >
                 {item.name}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="glossy-btn bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 text-white px-6 py-3 rounded-lg font-bold text-center mt-4"
-            >
-              Get Started
-            </Link>
           </div>
         </motion.div>
       )}

@@ -1,182 +1,247 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { motion } from 'framer-motion';
 import ScrollReveal from '../components/ScrollReveal';
-import ProjectCard from '../components/ProjectCard';
-import ProjectModal from '../components/ProjectModal';
-import { X } from 'lucide-react';
-import api from '../utils/api';
+import { ArrowRight, CheckCircle, Users, Brain, Code2, Rocket, Wrench } from 'lucide-react';
 
 const Projects = () => {
-  const [projects, setProjects] = useState([]);
-  const [filteredProjects, setFilteredProjects] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const categories = ['All', 'Digital Marketing', 'Educational Websites', 'Business Websites', 'Social Media Branding', 'Lead Generation', 'AI Automation', 'Software Maintenance', 'Branding'];
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  useEffect(() => {
-    if (selectedCategory === 'All') {
-      setFilteredProjects(projects);
-    } else {
-      setFilteredProjects(projects.filter(p => p.category === selectedCategory));
-    }
-  }, [selectedCategory, projects]);
-
-  const fetchProjects = async () => {
-    try {
-      const response = await api.get('/projects');
-      setProjects(response.data);
-      setFilteredProjects(response.data);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const processSteps = [
-    { step: 1, title: 'Requirement Analysis' },
-    { step: 2, title: 'Planning' },
-    { step: 3, title: 'Design & Development' },
-    { step: 4, title: 'Testing' },
-    { step: 5, title: 'Delivery' },
-    { step: 6, title: 'Support & Maintenance' }
+  const categories = [
+    "Digital Marketing Campaigns",
+    "Educational Institution Websites",
+    "Business Websites",
+    "Social Media Branding Projects",
+    "Lead Generation Campaigns",
+    "AI Automation Solutions",
+    "Software Maintenance Projects",
+    "Branding Projects"
   ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-24">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-pink-500 border-transparent mx-auto mb-4"></div>
-          <p className="text-light-blue/70 text-lg">Loading projects...</p>
-        </div>
-      </div>
-    );
-  }
+  const process = [
+    { step: 1, title: "Requirement Analysis", icon: <CheckCircle size={32} /> },
+    { step: 2, title: "Planning", icon: <Users size={32} /> },
+    { step: 3, title: "Design and Development", icon: <Code2 size={32} /> },
+    { step: 4, title: "Testing", icon: <Brain size={32} /> },
+    { step: 5, title: "Delivery", icon: <Rocket size={32} /> },
+    { step: 6, title: "Support & Maintenance", icon: <Wrench size={32} /> }
+  ];
 
   return (
-    <div className="pt-24">
-      <section className="py-20 bg-navy/50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-cyan-500/10"></div>
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <ScrollReveal>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Projects</h1>
-            <p className="text-xl text-light-blue/70">Showcasing our work and success stories</p>
-          </ScrollReveal>
+    <div className="bg-white">
+      {/* Portfolio Page Banner */}
+      <section className="min-h-[70vh] relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=800&fit=crop"
+            alt="Portfolio"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-blue-900/80"></div>
         </div>
-      </section>
 
-      <section className="py-12">
-        <div className="container mx-auto px-6">
-          <ScrollReveal>
-            <div className="flex flex-wrap justify-center gap-3">
-              {categories.map((category, idx) => (
-                <motion.button
-                  key={idx}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
-                    selectedCategory === category
-                      ? 'glossy-btn bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 text-white shadow-lg shadow-pink-500/30'
-                      : 'glass text-light-blue/80 hover:text-pink-400 border border-pink-500/10'
-                  }`}
-                >
-                  {category}
-                </motion.button>
-              ))}
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      <section className="py-8">
-        <div className="container mx-auto px-6">
-          <motion.div
-            layout
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            <AnimatePresence mode='popLayout'>
-              {filteredProjects.map((project, idx) => (
-                <motion.div
-                  key={project.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3, delay: idx * 0.1 }}
-                >
-                  <ProjectCard
-                    project={project}
-                    onView={() => setSelectedProject(project)}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-navy/50">
-        <div className="container mx-auto px-6">
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <span className="text-pink-400 font-semibold mb-4 block">Our Process</span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">How We Work</h2>
-            </div>
-          </ScrollReveal>
-          
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {processSteps.map((step, idx) => (
-              <ScrollReveal key={idx} delay={idx * 0.1}>
-                <motion.div
-                  whileHover={{ y: -8, scale: 1.05 }}
-                  className="glass glossy-card rounded-xl p-6 text-center border border-pink-500/10 hover:border-pink-500/30 transition-all duration-300"
-                >
-                  <div className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent mb-4">
-                    {step.step}
-                  </div>
-                  <h4 className="font-bold text-white">{step.title}</h4>
-                </motion.div>
-              </ScrollReveal>
-            ))}
+        <div className="relative h-full flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-white text-5xl md:text-7xl font-extrabold mb-6">
+              Our Portfolio
+            </h1>
+            <h2 className="text-blue-200 text-3xl md:text-5xl font-bold max-w-3xl mx-auto">
+              Explore Our Completed Projects & Process
+            </h2>
           </div>
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="container mx-auto px-6 text-center">
+      {/* COMPLETED PROJECTS: Categories Section */}
+      <section className="py-20 md:py-32 bg-white">
+        <div className="container mx-auto px-6">
           <ScrollReveal>
-            <div className="glass glossy-card rounded-3xl p-12 md:p-16 border border-pink-500/20">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Have a Project in Mind?</h2>
-              <p className="text-light-blue/70 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-                Let's bring your ideas to life! Get in touch with us for a free consultation.
-              </p>
-              <Link
-                to="/contact"
-                className="inline-block glossy-btn bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 text-white px-12 py-6 rounded-xl font-bold text-xl hover:shadow-2xl hover:shadow-pink-500/50 transition-all duration-300"
-              >
-                Start Your Project
-              </Link>
+            <div className="text-center mb-16">
+              <h2 className="text-[#1a2744] text-4xl md:text-5xl font-extrabold mb-6">
+                COMPLETED PROJECTS
+              </h2>
+              <h3 className="text-[#f4722b] text-2xl md:text-3xl font-bold mb-4">
+                Project Categories
+              </h3>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {categories.map((category, idx) => (
+                <motion.div
+                  key={idx}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="border-2 border-[#0a1f44] rounded-2xl p-6 bg-white shadow-lg"
+                >
+                  <h4 className="text-[#1a2744] text-lg font-bold text-center">
+                    {category}
+                  </h4>
+                </motion.div>
+              ))}
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectModal
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-          />
-        )}
-      </AnimatePresence>
+      {/* COMPLETED PROJECTS: Process Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-b from-[#e8f5f0] to-white">
+        <div className="container mx-auto px-6">
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h3 className="text-[#f4722b] text-2xl md:text-3xl font-bold">
+                Project Process
+              </h3>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-6">
+              {process.map((step, idx) => (
+                <motion.div
+                  key={idx}
+                  whileHover={{ y: -4 }}
+                  className="text-center p-6 rounded-2xl bg-white border border-gray-200 shadow-md"
+                >
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a6b5a] text-white flex items-center justify-center">
+                    {step.icon}
+                  </div>
+                  <div className="text-[#f4722b] text-2xl font-extrabold mb-2">
+                    {step.step}
+                  </div>
+                  <h4 className="text-[#1a2744] text-lg font-bold">
+                    {step.title}
+                  </h4>
+                </motion.div>
+              ))}
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+
+
+      {/* Footer */}
+      <footer className="bg-[#0a1f44] text-white py-16 relative overflow-hidden border-t border-white/20">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`,
+            backgroundSize: '30px 30px'
+          }}></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div>
+              <h3 className="text-2xl font-extrabold mb-6">
+                Fly Digital Technology
+              </h3>
+              <p className="text-white/80 text-base mb-8 leading-relaxed">
+                Empowering businesses with innovative digital solutions
+              </p>
+              <div className="flex gap-4">
+                {[
+                  { name: "Facebook", icon: "📘", color: "#3b5998" },
+                  { name: "Instagram", icon: "📷", color: "#e1306c" },
+                  { name: "LinkedIn", icon: "💼", color: "#0077b5" }
+                ].map((social, idx) => (
+                  <a
+                    key={idx}
+                    href="#"
+                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl hover:opacity-80 transition-opacity"
+                    style={{ backgroundColor: social.color }}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-white text-xl font-bold mb-6">
+                Important Links
+              </h4>
+              <ul className="space-y-3">
+                {[
+                  "SEO & Digital Marketing",
+                  "Social Media Marketing",
+                  "AI Chatbots & Automation",
+                  "Software Maintenance",
+                  "Google Ads & Content Marketing"
+                ].map((link, idx) => (
+                  <li key={idx}>
+                    <a
+                      href="#"
+                      className="text-white/80 hover:text-white transition-colors text-base"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="text-white text-xl font-bold mb-6">
+                  Quick Links
+                </h4>
+                <ul className="space-y-3">
+                  {[
+                    "About Us",
+                    "Products",
+                    "Portfolio",
+                    "Services",
+                    "Contact Us"
+                  ].map((link, idx) => (
+                    <li key={idx}>
+                      <a
+                        href="#"
+                        className="text-white/80 hover:text-white transition-colors text-base"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-white text-xl font-bold mb-6">
+                  Contact
+                </h4>
+                <ul className="space-y-3">
+                  <li className="text-white/80 text-base">
+                    info@flydigitaltechnology.com
+                  </li>
+                  <li className="text-white/80 text-base">
+                    +91 76968-06834
+                  </li>
+                  <li className="text-white/80 text-base leading-relaxed">
+                    Pride Icon Building, 3rd Floor,
+                    <br />
+                    Gokul Road, Hubballi,
+                    <br />
+                    Karnataka 580030
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 pt-8 border-t border-white/20 text-center">
+            <p className="text-white/60 text-sm">
+              © 2025 Fly Digital Technology. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/917696806834"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-[#25D366] text-white rounded-full flex items-center justify-center text-3xl shadow-lg hover:scale-110 transition-transform"
+      >
+        💬
+      </a>
     </div>
   );
 };
